@@ -58,18 +58,20 @@ class DigitRecoganizer():
         self.model.add(Dense(10,activation=tf.nn.softmax))
 
 
-    def train(self, epoch):
+    def train(self, epoch = 1):
         self.epoch = epoch
         self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
         self.model.fit(x=self.x_train,y=self.y_train, epochs=self.epoch)
         self.model.evaluate(self.x_test, self.y_test)
 
 
-    def predict(self, image_index = 4444):
-        plt.imshow(self.x_test[image_index].reshape(self.width, self.height),cmap='Greys')
+    def predict(self, image):
+        plt.imshow(image.reshape(self.width, self.height),cmap='Greys')
         plt.show()
-        pred = self.model.predict(self.x_test[image_index].reshape(1, self.width, self.height, self.color))
-        print(pred.argmax())
+        pred = self.model.predict(image.reshape(1, self.width, self.height, self.color))
+        print("Predict: ", pred)
+        return pred.argmax()
+        # print(pred.argmax())
     
 
 if __name__ == "__main__":
@@ -78,4 +80,5 @@ if __name__ == "__main__":
     dg.normalize()
     dg.cnn_model()
     dg.train()
-    dg.predict()
+    image = dg.x_test[4444].reshape(28, 28)
+    dg.predict(image)

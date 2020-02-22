@@ -10,7 +10,10 @@ class SudokuController:
     def show_grid(self):
         for row in range(9):
             for col in range(9):
-                print(self.grid[row][col], end=" ")
+                if self.grid[row][col] == 0:
+                    print(".", end = " ")
+                else:
+                    print(self.grid[row][col], end=" ")
             print("\n")
 
 

@@ -1,4 +1,11 @@
-
+import numpy as np
+import cv2
+import operator
+import numpy as np
+import matplotlib.pyplot as plt
+from keras.models import model_from_json
+import sys
+from controller.sudoku_controller import SudokuController
 
 class ImageController:
 
@@ -212,21 +219,20 @@ class ImageController:
     def get_squares_coordinates(self, cropped_image, number_of_squares):
         sudoku_squares = []
         size_one_square = cropped_image.shape[:1][0] / number_of_squares
-        print(size_one_square)
+        # print(size_one_square)
 
-        for i in range(number_of_squares):
-            for j in range(number_of_squares):
-                point1_of_square = ( j * size_one_square, i * size_one_square )
-                point2_of_square = ( ((j+1) * size_one_square) , ((i+1) * size_one_square) )
+        for j in range(number_of_squares):
+            for i in range(number_of_squares):
+                point1_of_square = ( i * size_one_square, j * size_one_square )
+                point2_of_square = ( ((i+1) * size_one_square) , ((j+1) * size_one_square) )
                 sudoku_squares.append((point1_of_square, point2_of_square))
-        print(sudoku_squares)
+        # print(sudoku_squares)
         return sudoku_squares
 
     def get_digits(self, cropped_image, sudoku_squares, size_of_digit_image):
         sudoku_digits = []
         img = self.preprocess_image(cropped_image.copy(), skip_dilate=True)
-        img = cropped_image.copy()
-        #show_image(img,"Dilated")
+        # show_image(img,"Dilated")
         for square in sudoku_squares:
             sudoku_digits.append(self.extract_digit(img, square, size_of_digit_image))
             # sudoku_dig= self.extract_digit(img, square, size_of_digit_image)
@@ -253,46 +259,44 @@ class ImageController:
         # cv2.waitKey(0)  # Wait for any key to be pressed (with the image window active)
         # cv2.destroyAllWindows()  # Close all windows
         return img
+    def output(self, a):
+        sys.stdout.write(str(a))
 
-    def identify_number(self, image, model):
+    def display_sudoku(self, sudoku):
+        for i in range(9):
+            for j in range(9):
+                cell = sudoku[i][j]
+                if cell == 0 or isinstance(cell, set):
+                    self.output('.')
+                else:
+                    self.output(cell)
+                if (j + 1) % 3 == 0 and j < 8:
+                    self.output(' |')
+
+                if j != 8:
+                    self.output('  ')
+            self.output('\n')
+            if (i + 1) % 3 == 0 and i < 8:
+                self.output("--------+----------+---------\n")
+
+    def identify_number(self, image, loaded_model):
         image_resize = cv2.resize(image, (28,28))    # For plt.imshow
         image_resize_2 = image_resize.reshape(1,28,28,1) 
         loaded_model_pred = loaded_model.predict_classes(image_resize_2 , verbose = 0)
         return loaded_model_pred[0]
 
-    def extract_number(self, sudoku, model):
-        # sudoku_digits_arr = np.asarray(sudoku_digits)
-        # print(sudoku_digits_arr.shape)
-        # sudoku_digits_arr = sudoku_digits_arr.reshape(9,9,28,28)
-        # print(sudoku_digits_arr.shape)
-        # #print(sudoku_digits_arr)
-        # grid = np.zeros([9,9])
-        # for i in range(sudoku_digits_arr.shape[0]):
-        #     for j in range(sudoku_digits_arr.shape[1]):
-        #         image = sudoku_digits_arr[i,j,:,:]
-        #         # img2 = im.filter(ImageFilter.MedianFilter())
-        #         # enhancer = ImageEnhance.Contrast(im)
-        #         # img2 = enhancer.enhance(2)
-        #         # show_image(image,"weqs")
-        #         if image.sum() > 20000:
-        #             grid[i][j] = self.identify_number(image, model)
-        #         else:
-        #             grid[i][j] = 0
-        # return grid.astype(int) 
+    def extract_number(self, sudoku, loaded_model):
         sudoku = cv2.resize(sudoku, (450,450))
-        plt.imshow(sudoku,'gray')
-        plt.show()
         # split sudoku
         grid = np.zeros([9,9])
         for i in range(9):
             for j in range(9):
-    #            image = sudoku[i*50+3:(i+1)*50-3,j*50+3:(j+1)*50-3]
+                # image = sudoku[i*50+3:(i+1)*50-3,j*50+3:(j+1)*50-3]
                 image = sudoku[i*50:(i+1)*50,j*50:(j+1)*50]
-                    
-    #            filename = "images/sudoku/file_%d_%d.jpg"%(i, j)
-    #            cv2.imwrite(filename, image)
+                show_image(image,"sub_image")
                 if image.sum() > 25000:
-                    grid[i][j] = self.identify_number(image, model)
+                    grid[i][j] = self.identify_number(image, loaded_model)
+                    print("Number: ",grid[i][j])
                 else:
                     grid[i][j] = 0
         return grid.astype(int)
@@ -301,19 +305,21 @@ class ImageController:
         '''
         Step 1: Preprocess image -> blur, threshold, invertion and dilation
         '''
-        image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-        image = self.preprocess_image(image, False)
+        original = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        processed = self.preprocess_image(original, False)
+        # show_image(processed,'processed')
         '''
         Step 2: Get Sudoku Square -> Find the largest contour (sudoku square) and Get the cordinates of largest contour.
         '''
-        corners = self.find_corners_of_sudoku(image)
+        corners = self.find_corners_of_sudoku(processed)
         '''
-            Step 3: Crop Image -> using wrap
+        Step 3: Crop Image -> using wrap
         '''  
-        cropped_image= self.crop_image(image,corners)
-        cropped_img = cv2.resize(cropped_image, (500, 500))
+        cropped_image= self.crop_image(original,corners)
+        show_image(cropped_image,'cropped_image')
+        # cropped_img = cv2.resize(cropped_image, (500, 500))
         '''
-        Step 4: Get Squares from the cropped image of sudoku
+        Step 4: Get Squares coordinates from the cropped image of sudoku
         '''  
         number_of_squares = 9
         sudoku_squares = self.get_squares_coordinates(cropped_image,number_of_squares)
@@ -329,23 +335,9 @@ class ImageController:
         '''
         final_image = self.show_digits(sudoku_digits)
         show_image(final_image,"final")
-        '''
-        Step 7: predict digits
 
-        To activate this we nneed to ad digit recog model first
-        '''
+        return final_image
         
-        # # Load the saved model
-        # json_file = open('model.json', 'r')
-        # loaded_model_json = json_file.read()
-        # json_file.close()
-        # loaded_model = model_from_json(loaded_model_json)
-        # # load weights into new model
-        # loaded_model.load_weights("model.h5")
-        # print("Loaded saved model from disk.")
-
-        # grid = self.extract_number(final_image, loaded_model)
-        # print(grid)
 
 def show_image(image, title):
     plt.imshow(image,'gray')
@@ -355,5 +347,26 @@ def show_image(image, title):
 if __name__ == "__main__":
     print("Insdie Image Controller.py")
     ic = ImageController() 
-    path = 'sudoku.jpg'
-    ic.controller(path)
+
+    # # Load the saved model
+    json_file = open('model.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    # load weights into new model
+    loaded_model.load_weights("model.h5")
+    print("Loaded saved model from disk.")
+
+
+    path = '../dataset/Sample1.jpg'
+    image = ic.controller(path)
+
+    grid = ic.extract_number(image, loaded_model)
+    ic.display_sudoku(grid.tolist())
+
+    sc = SudokuController(grid)
+
+    solution = sc.sudoku_solver(grid)
+    print('Solution:')
+    ic.display_sudoku(solution.tolist())
+

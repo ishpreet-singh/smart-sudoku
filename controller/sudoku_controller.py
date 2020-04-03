@@ -61,7 +61,7 @@ class SudokuController:
         grid[row][col] = 0
 
 
-    def solve(self):
+    def solve(self,grid):
 
         if(not self.is_cell_empty()):
             return True
@@ -72,11 +72,18 @@ class SudokuController:
         for num in range(1, 10):
             if self.is_cell_valid(row, col, num):
                 self.mark_cell(row, col, num)
-                if self.solve():
+                if self.solve(grid):
                     return True
                 self.unmark_cell(row, col)
         return False
 
+    def sudoku_solver(self, grid):
+        if(self.solve(grid)):
+            print('---') # print_grid(grid) -> to print the sudoku elements
+        else:
+            print ("No solution exists")
+        grid = grid.astype(int)
+        return grid
 
 if __name__ == "__main__":
     print("Insdie Sudoku Controller.py")
@@ -92,7 +99,7 @@ if __name__ == "__main__":
     sc = SudokuController(grid)
     print("Original Sudoku")
     sc.show_grid()
-    if sc.solve():
+    if sc.solve(grid):
         print("Solution: \n")
         sc.show_grid()
     else:

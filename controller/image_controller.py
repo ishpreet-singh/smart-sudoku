@@ -224,7 +224,7 @@ class ImageController:
         for j in range(number_of_squares):
             for i in range(number_of_squares):
                 point1_of_square = ( i * size_one_square, j * size_one_square )
-                point2_of_square = ( ((i+1) * size_one_square) , ((j+1) * size_one_square) )
+                point2_of_square = ( (i+1) * size_one_square , (j+1) * size_one_square )
                 sudoku_squares.append((point1_of_square, point2_of_square))
         # print(sudoku_squares)
         return sudoku_squares
@@ -281,7 +281,8 @@ class ImageController:
 
     def identify_number(self, image, loaded_model):
         image_resize = cv2.resize(image, (28,28))    # For plt.imshow
-        image_resize_2 = image_resize.reshape(1,28,28,1) 
+        # image_resize_2 = image_resize.reshape(1,28,28,1) 
+        image_resize_2 = image_resize.reshape(1,1, 28,28)
         loaded_model_pred = loaded_model.predict_classes(image_resize_2 , verbose = 0)
         return loaded_model_pred[0]
 
@@ -291,12 +292,10 @@ class ImageController:
         grid = np.zeros([9,9])
         for i in range(9):
             for j in range(9):
-                # image = sudoku[i*50+3:(i+1)*50-3,j*50+3:(j+1)*50-3]
                 image = sudoku[i*50:(i+1)*50,j*50:(j+1)*50]
-                show_image(image,"sub_image")
                 if image.sum() > 25000:
                     grid[i][j] = self.identify_number(image, loaded_model)
-                    print("Number: ",grid[i][j])
+                    # print("Number: ",grid[i][j])
                 else:
                     grid[i][j] = 0
         return grid.astype(int)
@@ -307,7 +306,7 @@ class ImageController:
         '''
         original = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         processed = self.preprocess_image(original, False)
-        # show_image(processed,'processed')
+        show_image(original,'Original Image')
         '''
         Step 2: Get Sudoku Square -> Find the largest contour (sudoku square) and Get the cordinates of largest contour.
         '''
@@ -316,7 +315,7 @@ class ImageController:
         Step 3: Crop Image -> using wrap
         '''  
         cropped_image= self.crop_image(original,corners)
-        show_image(cropped_image,'cropped_image')
+        show_image(cropped_image,'Cropped Image')
         # cropped_img = cv2.resize(cropped_image, (500, 500))
         '''
         Step 4: Get Squares coordinates from the cropped image of sudoku
@@ -334,7 +333,7 @@ class ImageController:
         Step 6: Show Digits
         '''
         final_image = self.show_digits(sudoku_digits)
-        show_image(final_image,"final")
+        show_image(final_image,"Final Image")
 
         return final_image
         
@@ -348,7 +347,7 @@ if __name__ == "__main__":
     print("Insdie Image Controller.py")
     ic = ImageController() 
 
-    # # Load the saved model
+    # Load the saved model
     json_file = open('model.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()

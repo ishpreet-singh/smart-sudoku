@@ -58,7 +58,7 @@ class SudokuController:
 
 
     def unmark_cell(self, row, col):
-        grid[row][col] = 0
+        self.grid[row][col] = 0
 
 
     def solve(self,grid):

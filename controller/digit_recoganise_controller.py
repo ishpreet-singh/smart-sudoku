@@ -5,6 +5,7 @@ from keras.layers import Dense, Conv2D, Dropout, Flatten, MaxPooling2D
 import matplotlib.pyplot as plt
 from keras.datasets import mnist
 from keras.utils import np_utils
+from keras.utils import to_categorical
 from keras import backend as K
 
 class DigitRecoganiseController:
@@ -46,21 +47,24 @@ class DigitRecoganiseController:
 if __name__ == "__main__":
     print("Insdie Digit Recoganise Controller.py")
     # K.set_image_dim_ordering('th')
-    K.common.set_image_dim_ordering('th')
+    # K.common.set_image_dim_ordering('th')
     # Fix random seed for reproducibility
     seed = 7
     np.random.seed(seed)
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
     # Reshape to be samples*pixels*width*height
-    X_train = X_train.reshape(X_train.shape[0], 28, 28, 1).astype('float32')
-    X_test = X_test.reshape(X_test.shape[0], 28, 28, 1).astype('float32')
+    # X_train = X_train.reshape(X_train.shape[0], 28, 28, 1).astype('float32')
+    # X_test = X_test.reshape(X_test.shape[0], 28, 28, 1).astype('float32')
+
+    X_train = np.expand_dims(X_train, axis=-1)
+    X_test = np.expand_dims(X_test, axis=-1)
+    y_train = to_categorical(y_train)
+    y_test = to_categorical(y_test)
 
     # Normalize inputs from 0-255 to 0-1
     X_train = X_train / 255
     X_test = X_test / 255
 
-    y_train = np_utils.to_categorical(y_train)
-    y_test = np_utils.to_categorical(y_test)
     number_neurons_output = y_test.shape[1]
 
     pool_size = (2, 2)

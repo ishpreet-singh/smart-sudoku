@@ -17,7 +17,7 @@ A Smart Sudoku that provides the solution to a classical 9X9 Sudoku from its ima
 
 1. Stage 1 Cropped Image
    
-![<image src="https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage1.png" width="200" height="200"/>](https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage1.png)
+![<image src="https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage1.png" width="50" height="50"/>](https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage1.png)
 
 1. Stage 2 Image after Blurring, Thresholding, Inversion and Grid Detection
 

@@ -344,7 +344,6 @@ def show_image(image, title):
     plt.show()
 
 if __name__ == "__main__":
-    print("Insdie Image Controller.py")
     ic = ImageController() 
 
     # Load the saved model
@@ -354,9 +353,7 @@ if __name__ == "__main__":
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
     loaded_model.load_weights("model.h5")
-    print("Loaded saved model from disk.")
-
-
+    
     path = '../dataset/Sample1.jpg'
     image = ic.controller(path)
 

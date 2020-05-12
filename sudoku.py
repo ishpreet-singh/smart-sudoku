@@ -32,7 +32,6 @@ if __name__ == "__main__":
         # Extract Numbers from Grid
         grid = ic.extract_number(image, model)
         sc = SudokuController(grid)
-        print("Grid: \n", grid)
         ic.display_sudoku(grid.tolist())
 
         # Solution using CNN

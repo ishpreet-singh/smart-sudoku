@@ -100,3 +100,22 @@ A Smart Sudoku that provides the solution to a classical 9X9 Sudoku from its ima
 
 ## File Description
 
+* **cnn.model**: cnn.py saved weights
+  
+* **cnn.py**: Defining CNN Model for finding Sudoku Solution, given unsolved sudoku
+
+* **digit_recoganise_controller.py**: Defining CNN modle for recoginizing digits from grid images
+
+* **gpus.py**: Helper file required by Tensorflow 
+
+* **image_controller.py**: Defining Class for Image reconition using methods like Blurring, Thresholding, Inversion
+
+* **model.h5**: digit_recoganise_controller saved weight
+
+* **model.json**: digit_recoganise_controller saved weight in JSON format
+
+* **sudoku_controller.py**: A backtracking approach to solve Sudoku
+
+* **sudoku_solver**: Class to solve sudoku using cnn.py.
+
+* **sudoku**: Main File

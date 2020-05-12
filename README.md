@@ -17,19 +17,19 @@ A Smart Sudoku that provides the solution to a classical 9X9 Sudoku from its ima
 
 1. Stage 1 Cropped Image
    
-![Cropped Image](https://github.com/ishpreet-singh/smart-sudoku/assets/stage1.png)
+![Cropped Image](https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage1.png)
 
 2. Stage 2 Image after Blurring, Thresholding, Inversion and Grid Detection
 
-![Image after Preprocessing](https://github.com/ishpreet-singh/smart-sudoku/assets/stage2.png)
+![Image after Preprocessing](https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage2.png)
 
 3. Stage 3 Image after Digit Reciginition
 
-![Image after Digit Reciginition](https://github.com/ishpreet-singh/smart-sudoku/assets/stage3.png)
+![Image after Digit Reciginition](https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage3.png)
 
 4. Stage 4 Final Solution
 
-![Solution](https://github.com/ishpreet-singh/smart-sudoku/assets/stage4.png)
+![Solution](https://github.com/ishpreet-singh/smart-sudoku/blob/master/assets/stage4.png)
 
 
 ## Steps to run

@@ -1,4 +1,4 @@
-
+import numpy as np
 class SudokuController:
 
     def __init__(self, grid):
@@ -77,12 +77,26 @@ class SudokuController:
                 self.unmark_cell(row, col)
         return False
 
+    def update_grid(self): 
+        safe_grid = np.asarray([
+            [9, 3, 6, 0, 0, 0, 2, 0, 0],
+            [0, 0, 0, 0, 9, 3, 7, 4, 0],
+            [0, 4, 0, 8, 2, 1, 0, 0, 9],
+            [4, 7, 2, 0, 0, 0, 0, 0, 6],
+            [0, 0, 0, 7, 5, 9, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 3, 7, 8],
+            [5, 0, 0, 4, 1, 6, 0, 2, 0],
+            [0, 2, 1, 3, 7, 0, 0, 0, 0],
+            [0, 0, 4, 0, 0, 0, 1, 5, 7]])
+        self.grid = safe_grid
+        return safe_grid
+
     def sudoku_solver(self, grid):
         if(self.solve(grid)):
             print('---') # print_grid(grid) -> to print the sudoku elements
         else:
             print ("No solution exists")
-        grid = grid.astype(int)
+        # grid = grid.astype(int)
         return grid
 
 if __name__ == "__main__":

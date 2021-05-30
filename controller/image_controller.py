@@ -248,6 +248,7 @@ class ImageController:
             row = np.concatenate(with_border[i * 9:((i + 1) * 9)], axis=1)
             rows.append(row)
         digit_img = self.show_image(np.concatenate(rows))
+        # digit_img = show_image(np.concatenate(rows))
         return digit_img
 
     def show_image(self,img):
@@ -255,10 +256,11 @@ class ImageController:
         # print(type(img))
         # print(img.shape)
         # cv2.imshow('image', img)  # Display the image
-        # #cv2.imwrite('images/gau_sudoku3.jpg', img)
+        # cv2.imwrite('images/gau_sudoku3.jpg', img)
         # cv2.waitKey(0)  # Wait for any key to be pressed (with the image window active)
         # cv2.destroyAllWindows()  # Close all windows
         return img
+
     def output(self, a):
         sys.stdout.write(str(a))
 
@@ -281,8 +283,9 @@ class ImageController:
 
     def identify_number(self, image, loaded_model):
         image_resize = cv2.resize(image, (28,28))    # For plt.imshow
-        # image_resize_2 = image_resize.reshape(1,28,28,1) 
-        image_resize_2 = image_resize.reshape(1,1, 28,28)
+        # print("Image resized")
+        image_resize_2 = image_resize.reshape(1,28,28,1) 
+        # image_resize_2 = image_resize.reshape(1,1, 28,28)
         loaded_model_pred = loaded_model.predict_classes(image_resize_2 , verbose = 0)
         return loaded_model_pred[0]
 
@@ -293,7 +296,7 @@ class ImageController:
         for i in range(9):
             for j in range(9):
                 image = sudoku[i*50:(i+1)*50,j*50:(j+1)*50]
-                if image.sum() > 25000:
+                if image.sum() > 80000:
                     grid[i][j] = self.identify_number(image, loaded_model)
                     # print("Number: ",grid[i][j])
                 else:
@@ -322,7 +325,6 @@ class ImageController:
         '''  
         number_of_squares = 9
         sudoku_squares = self.get_squares_coordinates(cropped_image,number_of_squares)
-
         '''
         Step 5: Get digits from each square of sudoku
         '''   

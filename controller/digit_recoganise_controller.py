@@ -1,7 +1,9 @@
 import numpy as np
 import tensorflow as tf
-from keras.models import Sequential
-from keras.layers import Dense, Conv2D, Dropout, Flatten, MaxPooling2D
+# from keras.models import Sequential
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, Dropout, Flatten, MaxPooling2D
+# from keras.layers import Dense, Conv2D, Dropout, Flatten, MaxPooling2D
 import matplotlib.pyplot as plt
 from keras.datasets import mnist
 from keras.utils import np_utils

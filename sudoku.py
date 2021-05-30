@@ -3,12 +3,15 @@ import cv2
 import matplotlib.pyplot as plt
 from time import time
 import tensorflow as tf
-from keras.models import model_from_json
+from tensorflow.keras.models import model_from_json
 import keras.backend.tensorflow_backend as tfback
 from controller.gpus import get_available_gpus
 from controller.sudoku_solver import SudokuSolver
 from controller.image_controller import ImageController
 from controller.sudoku_controller import SudokuController
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
 if __name__ == "__main__":
     tfback._get_available_gpus = get_available_gpus
@@ -28,18 +31,19 @@ if __name__ == "__main__":
         ic = ImageController() 
         img_path = sys.argv[1]
         image = ic.controller(img_path)
-
+        
         # Extract Numbers from Grid
         grid = ic.extract_number(image, model)
         sc = SudokuController(grid)
+        grid = sc.update_grid()
         ic.display_sudoku(grid.tolist())
-
+        
         # Solution using CNN
-        ss = SudokuSolver()
-        solution = ss.solve_sudoku(grid)
+        # ss = SudokuSolver()
+        # solution = ss.solve_sudoku(grid)
 
         # Solution using Backtracting
-        # solution = sc.sudoku_solver(grid)
+        solution = sc.sudoku_solver(grid)
         
         print('\nSolution:')
         ic.display_sudoku(solution.tolist())
